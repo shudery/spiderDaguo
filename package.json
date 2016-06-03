@@ -1,0 +1,27 @@
+{
+  "name": "spider",
+  "version": "1.0.0",
+  "description": "A spider for fetch imformation what you want.",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.13.4",
+    "cheerio": "*",
+    "colors": "*",
+    "underscore": "*",
+    "superagent": "^2.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/shudery/spiderDaguo.git"
+  },
+  "author": "Daguo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shudery/spiderDaguo/issues"
+  },
+  "homepage": "https://github.com/shudery/spiderDaguo#readme"
+}
