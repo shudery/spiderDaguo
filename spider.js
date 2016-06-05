@@ -2,19 +2,23 @@ var superagent = require('superagent'),
 	cheerio = require('cheerio'),
 	express = require('express'),
 	config = require('./config'),
+	log4js = require('log4js'),
 	colors = require('colors'),
 	http = require('http'),
 	tools = require('./tools.js'),
 	url = require('url'),
 	fs = require('fs'),
-	_ = require('underscore');
+	_ = require('underscore'),
+	logger = log4js.getLogger('-');
+
+
 module.exports = function(obj) {
 	return {
 		//爬虫标识
 		name: obj.name,
 		//lists的URL数组
 		homePage_url: obj.homePage_url,
-		domain: obj.domain,
+		domain: obj.domain || '',
 		//List爬取深度
 		maxPage: obj.maxPage || config.maxPage,
 		//任务初始索引值
@@ -25,10 +29,10 @@ module.exports = function(obj) {
 		lists_nofilter: [],
 		//存放经过筛选的Lists
 		lists: [],
-		fetchList: obj.fetchList,
-		filterLists: obj.filterLists,
-		templates: obj.templates,
-		addSitePage: obj.addSitePage,
+		fetchList: obj.fetchList || '',
+		filterLists: obj.filterLists || '',
+		templates: obj.templates || '',
+		addSitePage: obj.addSitePage || '',
 		/**
 		 * 创建列表爬取任务
 		 * @param {Object} 爬虫
@@ -44,14 +48,15 @@ module.exports = function(obj) {
 					index++;
 					(function(page, index) {
 						if (page <= spider.maxPage) {
-							console.log(tools.getTime() + spider.name.green + '_PAGE_NO.' + (page - 1) + ' already fetch!')
+							logger.info(spider.name.grey + ('_PAGE_NO.' + (page - 1) + ' already fetch!').green)
 							setTimeout(function() {
 								spider.creListTask(spider, page, index)
 							}, config.pageListInterval)
 						} else {
-							console.log(tools.getTime() + spider.name.green + '_PAGE_NO.' + (page - 1) + ' already fetch!')
-							console.log(tools.getTime() + spider.name.green + '_finish all listTask and create articleTask:')
+							logger.info(spider.name.grey + ('_PAGE_NO.' + (page - 1) + ' already fetch!').green)
+							logger.info(spider.name.grey + ('_finish all listTask and create articleTask:').green)
 							spider.creArticleTask(spider.lists);
+
 						}
 					})(page, index);
 				});
@@ -73,14 +78,14 @@ module.exports = function(obj) {
 			return Promise.all(promises)
 				.then(function(value) {
 					//所有Lists爬取完成
-					console.log(tools.getTime() + (that.name + '_finish all promises').green);
+					logger.info(that.name.grey + ('_finish all promises').green);
 					//将爬到的articles存入文件
 					fs.writeFile(config.fileFolder + that.name + '_' + tools.createId() + config.fileStyle, JSON.stringify(that.articles), function(err) {
-						err && console.log(err);
-						!err && console.log(tools.getTime() + that.name.green + '_write success'.green)
+						err && logger.info(err);
+						!err && logger.info(that.name.grey + '_write success'.green)
 					})
 				}).catch(err => {
-					console.log(err);
+					logger.info(err);
 				});
 		},
 		/**
@@ -95,7 +100,7 @@ module.exports = function(obj) {
 					return this.templates[i].fetchArticle;
 				}
 			}
-			console.log(tools.getTime() + 'article_' + list.id.green + 'No templates match!');
+			logger.warn('article_' + list.id.yellow + 'No templates match!');
 			return '';
 		},
 		/**
@@ -107,11 +112,11 @@ module.exports = function(obj) {
 		requestArticle: function(list, index, fetchArticle) {
 			var that = this;
 			return new Promise(function(resolve, reject) {
-				console.log(tools.getTime() + that.name.green + '_article_' + list.id.green + '_request url of article:');
+				logger.info(that.name.grey + '_article_' + list.id.yellow + '_request url of article:');
 				superagent.get(list.articleUrl)
 					.end(function(err, res) {
 						if (res.text.length > config.resTextLen) {
-							console.log(tools.getTime() + that.name.green + '_article_' + list.id.green + '_get the pageHtml');
+							logger.info(that.name.grey + '_article_' + list.id.yellow + '_get the pageHtml');
 							resolve(res.text);
 						} else {
 							reject('request article res_text is empty!');
@@ -124,3 +129,17 @@ module.exports = function(obj) {
 		}
 	}
 }
+
+// log4js.loadAppender('file');
+// log4js.addAppender(log4js.appenders.file('logs/cheese.log'), 'cheese');
+// //logger.setLevel('INFO');
+// log4js.configure({
+// 	appenders: [{
+// 		type: 'console'
+// 	}, {
+// 		type: 'file',
+// 		filename: 'logs/cheese.log',
+// 		category: 'cheese'
+// 	}],
+// 	replaceConsole: true
+// });

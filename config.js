@@ -13,7 +13,7 @@ const PAGELIST_INTERVAL = 2000,
 //article字段构造函数
 function ArticleObj(list) {
 	var obj = {};
-	obj.formList = list;
+	obj.fromList = list;
 	obj.content = '';
 	obj.createTime = '';
 	obj.createTimeLebal = '';
@@ -31,6 +31,8 @@ function ListObj() {
 		countView: '',
 		countStar: '',
 		countComment: '',
+		tags:'',
+		publishFrom: '',
 		publishTime: ''
 	}
 };

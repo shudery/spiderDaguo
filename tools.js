@@ -6,7 +6,11 @@ function getTime() {
 };
 
 function createId() {
-	return String(Math.floor(100000000 * Math.random())).slice(0, 6);
+	var sixteenId = '';
+	for(var i=0;i<10;i++){
+		sixteenId += Math.floor(Math.random()*16).toString(16);
+	}
+	return sixteenId;
 };
 module.exports = {
 	getTime:getTime,

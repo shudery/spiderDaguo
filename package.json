@@ -4,11 +4,12 @@
   "description": "A spider for fetch imformation what you want.",
   "main": "app.js",
   "dependencies": {
-    "express": "^4.13.4",
     "cheerio": "*",
     "colors": "*",
-    "underscore": "*",
-    "superagent": "^2.0.0"
+    "express": "^4.13.4",
+    "log4js": "^0.6.36",
+    "superagent": "^2.0.0",
+    "underscore": "*"
   },
   "devDependencies": {},
   "scripts": {
