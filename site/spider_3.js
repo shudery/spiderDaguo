@@ -13,7 +13,7 @@ var cheerio = require('cheerio'),
 	_ = require('underscore'),
 	logger = log4js.getLogger('-');
 
-var spider_3 = new Spider({
+module.exports = new Spider({
 	name: 'segmentfault',
 	//每月热门
 	homePage_url: ['https://segmentfault.com/blogs/hottest/monthly'],
@@ -98,4 +98,3 @@ var spider_3 = new Spider({
 		}
 	}
 });
-module.exports = spider_3;

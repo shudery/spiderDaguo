@@ -13,7 +13,7 @@ var cheerio = require('cheerio'),
 	tools = require('../tools.js'),
 	logger = log4js.getLogger('-');
 
-var spider_2 = new Spider({
+module.exports = new Spider({
 	name: 'w3cfuns',
 	homePage_url: ['http://www.w3cfuns.com'],
 	domain: 'http://www.w3cfuns.com/',
@@ -89,4 +89,3 @@ var spider_2 = new Spider({
 		logger.warn(this.name.grey + '_only one page.'.yellow)
 	}
 });
-module.exports = spider_2;
