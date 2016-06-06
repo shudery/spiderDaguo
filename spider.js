@@ -27,12 +27,31 @@ module.exports = function(obj) {
 		articles: [],
 		//存放所有Lists
 		lists_nofilter: [],
+		//存放只经过全局筛选的lists
+		lists_noSingleFilter: [],
 		//存放经过筛选的Lists
 		lists: [],
+		//统一过滤条件
+		globalFilter: config.globalFilter || '',
 		fetchList: obj.fetchList || '',
 		filterLists: obj.filterLists || '',
 		templates: obj.templates || '',
 		addSitePage: obj.addSitePage || '',
+		allFilterLists: function(lists_nofilter) {
+			var lists = [];
+			if (config.startGlobalFilter) {
+				var filter = config.globalFilter;
+				_.each(lists_nofilter, function(val) {
+					var choose = filter.filter_field && val.title.indexOf(filter.filter_field) > -1;
+					if (choose) {
+						lists.push(val);
+					}
+				});
+				return lists;
+			} else {
+				return lists_nofilter;
+			}
+		},
 		/**
 		 * 创建列表爬取任务
 		 * @param {Object} 爬虫
@@ -43,7 +62,8 @@ module.exports = function(obj) {
 			superagent.get(spider.homePage_url[index])
 				.end(function(err, res) {
 					spider.lists_nofilter = spider.lists_nofilter.concat(spider.fetchList(res.text));
-					spider.lists = spider.lists.concat(spider.filterLists(spider.lists_nofilter));
+					spider.lists_noSingleFilter = spider.lists_noSingleFilter.concat(spider.allFilterLists(spider.lists_nofilter));
+					spider.lists = spider.lists.concat(spider.filterLists(spider.lists_noSingleFilter));
 					page++;
 					index++;
 					(function(page, index) {

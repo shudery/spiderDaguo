@@ -2,7 +2,7 @@
 编号：3  
 网站：segmentfault
 爬取深度：3  
-筛选条件：浏览量1000
+筛选条件：浏览量3000
 */
 var cheerio = require('cheerio'),
 	config = require('../config.js'),
@@ -13,12 +13,13 @@ var cheerio = require('cheerio'),
 	_ = require('underscore'),
 	logger = log4js.getLogger('-');
 
+const MIN_COUNT_VIEW = 3000;
 module.exports = new Spider({
 	name: 'segmentfault',
 	//每月热门
 	homePage_url: ['https://segmentfault.com/blogs/hottest/monthly'],
 	domain: 'https://segmentfault.com',
-	maxPage: 3,
+	maxPage: 1,
 	/**
 	 * 列表页爬取函数
 	 * @param {String} 列表页面字符串
@@ -54,7 +55,7 @@ module.exports = new Spider({
 		_.each(lists_nofilter, function(val) {
 			if (/k/.test(val.countView)) {
 				val.countView = 1000 * val.countView.split('k')[0];
-				if (val.countView > 1000) {
+				if (val.countView > MIN_COUNT_VIEW) {
 					lists.push(val);
 				}
 			}

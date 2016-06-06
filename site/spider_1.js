@@ -2,7 +2,7 @@
 编号：1   
 网站：前端乱炖
 爬取深度：3  
-筛选条件：浏览量10000
+筛选条件：浏览量20000
 */
 
 var cheerio = require('cheerio'),
@@ -14,11 +14,12 @@ var cheerio = require('cheerio'),
 	tools = require('../tools.js'),
 	logger = log4js.getLogger('-');
 
+const MIN_COUNT_VIEW = 20000;
 module.exports = new Spider({
 	name: 'qianDuanLuanDun',
 	homePage_url: ['http://www.html-js.com/article'],
 	domain: 'http://www.html-js.com',
-	maxPage: '',
+	maxPage: 1,
 	/**
 	 * 列表页爬取函数
 	 * @param {String} 列表页面字符串
@@ -50,7 +51,7 @@ module.exports = new Spider({
 	filterLists: function(lists_nofilter) {
 		var lists = [];
 		_.each(lists_nofilter, function(val) {
-			if (val.countView > 10000) {
+			if (val.countView > MIN_COUNT_VIEW) {
 				lists.push(val);
 			}
 		})

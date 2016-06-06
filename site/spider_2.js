@@ -2,7 +2,7 @@
 编号：2   
 网站：w3cfuns前端网
 爬取深度：1  
-筛选条件：浏览量1000
+筛选条件：浏览量1500
 */
 var cheerio = require('cheerio'),
 	config = require('../config.js'),
@@ -13,6 +13,7 @@ var cheerio = require('cheerio'),
 	tools = require('../tools.js'),
 	logger = log4js.getLogger('-');
 
+const MIN_COUNT_VIEW = 1500;
 module.exports = new Spider({
 	name: 'w3cfuns',
 	homePage_url: ['http://www.w3cfuns.com'],
@@ -49,7 +50,7 @@ module.exports = new Spider({
 	filterLists: function(lists_nofilter) {
 		var lists = [];
 		_.each(lists_nofilter, function(val) {
-			if (val.countView > 1000) {
+			if (val.countView > MIN_COUNT_VIEW) {
 				lists.push(val);
 			}
 		})
