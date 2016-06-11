@@ -13,7 +13,7 @@ var cheerio = require('cheerio'),
 	tools = require('../tools.js'),
 	logger = log4js.getLogger('-');
 
-const MIN_COUNT_VIEW = 1500;
+const MIN_COUNT_VIEW = 1000;
 module.exports = new Spider({
 	name: 'w3cfuns',
 	homePage_url: ['http://www.w3cfuns.com'],

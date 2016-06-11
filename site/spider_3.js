@@ -13,7 +13,7 @@ var cheerio = require('cheerio'),
 	_ = require('underscore'),
 	logger = log4js.getLogger('-');
 
-const MIN_COUNT_VIEW = 3000;
+const MIN_COUNT_VIEW = 2000;
 module.exports = new Spider({
 	name: 'segmentfault',
 	//每月热门

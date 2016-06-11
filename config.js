@@ -11,7 +11,7 @@ const PAGELIST_INTERVAL = 1000,
 	//默认List抓取深度
 	DEFAULT_MAXPAGE = 3,
 	//是否开启全局过滤
-	START_GLOBAL_FILTER = true,
+	START_GLOBAL_FILTER = false,
 	//全局搜索字段
 	FILTER_FIELD = 'javascript',
 	//全局过滤要求

@@ -14,7 +14,7 @@ var cheerio = require('cheerio'),
 	tools = require('../tools.js'),
 	logger = log4js.getLogger('-');
 
-const MIN_COUNT_VIEW = 20000;
+const MIN_COUNT_VIEW = 15000;
 module.exports = new Spider({
 	name: 'qianDuanLuanDun',
 	homePage_url: ['http://www.html-js.com/article'],
