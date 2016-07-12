@@ -11,9 +11,11 @@ var superagent = require('superagent'),
 	_ = require('underscore'),
 	logger = log4js.getLogger('-');
 
+var app = express();
 
 module.exports = function(obj) {
 	return {
+		id: obj.id,
 		//爬虫标识
 		name: obj.name,
 		//lists的URL数组
@@ -100,10 +102,35 @@ module.exports = function(obj) {
 					//所有Lists爬取完成
 					logger.info(that.name.grey + ('_finish all promises').green);
 					//将爬到的articles存入文件
-					fs.writeFile(config.fileFolder + that.name + '_' + tools.createId() + config.fileStyle, JSON.stringify(that.articles), function(err) {
+					that.articles = JSON.stringify(that.articles);
+					var articles = {
+						content: that.articles,
+						id: that.id
+					}
+					config.articles.push(articles)
+					fs.writeFile(config.fileFolder + that.name + '_' + tools.createId() + config.fileStyle, that.articles, function(err) {
 						err && logger.info(err);
 						!err && logger.info(that.name.grey + '_write success'.green)
-					})
+					});
+					config.count++;
+					if (config.count === config.spiderNum) {
+
+						app.get('/', function(req, res, next) {
+							var id = req.query.id;
+							if (id >= 0 && id < config.spiderNum){
+							res.send(config.articles[id].content);
+							console.log('app get at /' + id)
+
+							}else{
+								console.log('query error!!')
+							}
+						});
+
+						app.listen(1000, function() {
+							console.log('app listen at port 1000');
+						});
+					}
+
 				}).catch(err => {
 					logger.info(err);
 				});

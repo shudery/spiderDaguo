@@ -16,6 +16,7 @@ var cheerio = require('cheerio'),
 
 const MIN_COUNT_VIEW = 15000;
 module.exports = new Spider({
+	id:1,
 	name: 'qianDuanLuanDun',
 	homePage_url: ['http://www.html-js.com/article'],
 	domain: 'http://www.html-js.com',

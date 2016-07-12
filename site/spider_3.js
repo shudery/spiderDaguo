@@ -15,6 +15,7 @@ var cheerio = require('cheerio'),
 
 const MIN_COUNT_VIEW = 2000;
 module.exports = new Spider({
+	id:3,
 	name: 'segmentfault',
 	//每月热门
 	homePage_url: ['https://segmentfault.com/blogs/hottest/monthly'],

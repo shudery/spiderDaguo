@@ -2,6 +2,8 @@ var tools = require('./tools.js');
 
 //翻页Lists爬取间隔
 const PAGELIST_INTERVAL = 1000,
+//爬虫总数
+	SPIDER_NUM = 3,
 	//保存文件位置
 	WRITEFILE_FOLDER = './articles/',
 	//保存article的文件格式
@@ -55,11 +57,14 @@ function ListObj() {
 module.exports = {
 	fileStyle: WRITEFILE_STYLE,
 	pageListInterval: PAGELIST_INTERVAL,
+	spiderNum : SPIDER_NUM,
 	resTextLen: RESPONSE_MINLENGTH,
 	fileFolder: WRITEFILE_FOLDER,
 	startGlobalFilter: START_GLOBAL_FILTER,
 	globalFilter: globalFilter,
 	ArticleObj: ArticleObj,
 	ListObj: ListObj,
+	count: 0,
+	articles: [],
 	maxPage: DEFAULT_MAXPAGE
 }

@@ -15,6 +15,7 @@ var cheerio = require('cheerio'),
 
 const MIN_COUNT_VIEW = 1000;
 module.exports = new Spider({
+	id:2,
 	name: 'w3cfuns',
 	homePage_url: ['http://www.w3cfuns.com'],
 	domain: 'http://www.w3cfuns.com/',

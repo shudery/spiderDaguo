@@ -1,5 +1,9 @@
-var spider = require('./site/allSite.js'),
-	async = require('async');
+var sites = require('./site/allSite.js'),
+	spiders = require('./spider.js'),
+	async = require('async'),
+	express = require('express');
+var app = express();
+
 
 // var spiderN = [];
 // spiderN.push(spider.spider_1);
@@ -11,15 +15,15 @@ var spider = require('./site/allSite.js'),
 // 	console.log('!!!!MAPLIMIT ERROR!!!!')
 // })
 //开始爬取
-startupSpider(spider.spider_1);
-startupSpider(spider.spider_2);
-startupSpider(spider.spider_3);
+startupSpider(sites.spider_1);
+startupSpider(sites.spider_2);
+startupSpider(sites.spider_3);
 
-function startupSpider(spider) {
+function startupSpider(site) {
 	var page = 1;
 	var index = 0;
 	//添加翻页列表
-	spider.addSitePage();
+	site.addSitePage();
 	//创建列表任务
-	spider.creListTask(spider, page, index);
-}	
+	site.creListTask(site, page, index);
+};
