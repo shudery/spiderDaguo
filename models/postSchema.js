@@ -1,0 +1,15 @@
+module.exports = {
+	id: Number,
+	title: String,
+	link: String,
+	author: String,
+	desc: String,
+	publishAt: String,
+	star: Number,
+	source: String,
+	srcUrl: String,
+	tags: String,
+	content: String,
+	createAt: String,
+	site: String,
+}

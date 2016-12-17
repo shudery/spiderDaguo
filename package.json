@@ -4,14 +4,13 @@
   "description": "A spider for fetch imformation what you want.",
   "main": "app.js",
   "dependencies": {
-    "cheerio": "*",
-    "colors": "*",
-    "express": "^4.13.4",
-    "log4js": "^0.6.36",
-    "superagent": "^2.0.0",
-    "underscore": "*"
+    "cheerio": "^0.22.0",
+    "mongoose": "^4.7.3",
+    "superagent": "^3.3.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "colors": "^1.1.2"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

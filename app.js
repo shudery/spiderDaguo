@@ -1,29 +1,49 @@
-var sites = require('./site/allSite.js'),
-	spiders = require('./spider.js'),
-	async = require('async'),
-	express = require('express');
-var app = express();
+const superagent = require('superagent'),
+    mongoose = require('mongoose'),
+    cheerio = require('cheerio'),
+    colors = require('colors'),
+    _ = require('./lib/daguo'),
+    fs = require('fs');
 
+const postSchema = require('./models/postSchema'),
+    dbServer = 'mongodb://127.0.0.1:27017/node',
+    log = _.log;
 
-// var spiderN = [];
-// spiderN.push(spider.spider_1);
-// spiderN.push(spider.spider_2);
-// spiderN.push(spider.spider_3);
-// async.mapLimit(spiderN,4,function(spider,callback){
-// 	startupSpider(spider,callback)
-// },function(err){
-// 	console.log('!!!!MAPLIMIT ERROR!!!!')
-// })
-//开始爬取
-startupSpider(sites.spider_1);
-startupSpider(sites.spider_2);
-startupSpider(sites.spider_3);
+//connect db
+mongoose.connect(dbServer)
+const postModel = mongoose.model('posts', new mongoose.Schema(postSchema));
 
-function startupSpider(site) {
-	var page = 1;
-	var index = 0;
-	//添加翻页列表
-	site.addSitePage();
-	//创建列表任务
-	site.creListTask(site, page, index);
+let tasks = [],
+    ponit;
+
+fs.readdirSync(__dirname + '/sites').forEach((path, i) => {
+    let site = require('./sites/' + path)(postModel);
+    tasks.push(startSpider(site));
+});
+
+startTasks();
+
+function startTasks() {
+    point = 0;
+    tasks[point]();
+}
+
+function startSpider(site, count) {
+    return function() {
+        site.listsFetch()
+            .then((posts) => {
+                let taskLists = [];
+                posts.forEach((post) => {
+                    post && taskLists.push(site.postFetch(post));
+                });
+                return Promise.all(taskLists);
+            }).then((posts) => {
+                log(`${site.baseSite} done!`.yellow);
+                //爬下一个网站
+                point++;
+                tasks[point] && tasks[point]();
+            }).catch((err) => {
+                err && log(`promise error catch :${err}`);
+            });
+    };
 };
