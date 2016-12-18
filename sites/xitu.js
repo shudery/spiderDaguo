@@ -12,29 +12,32 @@ module.exports = function(model) {
         baseUrl: 'https://gold.xitu.io',
         baseSite: 'xitu',
         model,
-        postFetch(post) {
+        listsFetch() {
             let that = this;
             return new Promise((resolve, reject) => {
-                superagent.get(post.link).end((err, res) => {
-                    !res.text && reject(`postFetch res.text error :${link}`)
-                    let $ = cheerio.load(res.text,{decodeEntities: false});
-                    post.author = $('.author-name').text();
-                    post.publishAt = $('.author-meta').text();
-                    post.content = $('.entry-content').html();
-                    // post.tags = $('.taglist--inline').text();
-                    if (post.content) {
-                        that.model.create(post, (err) => {
-                            err && log(`db save error..`);
-                            log(`db save success:'${post.link}'`)
-                            resolve(post);
-                        })
-                    }else{
-                    	log(`this link lose content: '${post.link}'`)
-                    	resolve(post);
-                    }
-                })
+                log(`start fetch ${that.baseSite}`.yellow);
+                superagent.get(that.url).end((err, res) => {
+                    !res.text && reject(`listsFetch res.text error: '${that.url}'`)
+                    let $ = cheerio.load(res.text, { decodeEntities: false });
+                    let lists = $('.entries .entry');
+                    let tasks = [];
+                    lists.each(function() {
+                        let link = $(this).find('.entry-meta .entry-meta-more a').attr('href');
+                        if (link) {
+                            link = link.split('url=')[1];
+                            tasks.push(that.checkDatas(link, $(this), that.model));
+                        }
+
+                    });
+                    Promise.all(tasks)
+                        .then((posts) => {
+                            log('reso');
+                            resolve(posts);
+                        });
+                });
             });
         },
+
         checkDatas(link, $el) {
             let that = this;
             return new Promise((resolve, reject) => {
@@ -55,29 +58,28 @@ module.exports = function(model) {
                 })
             });
         },
-        listsFetch() {
+
+        postFetch(post) {
             let that = this;
             return new Promise((resolve, reject) => {
-            	log(`start fetch ${that.baseSite}`.yellow);
-                superagent.get(that.url).end((err, res) => {
-                    !res.text && reject(`listsFetch res.text error: '${that.url}'`)
-                    let $ = cheerio.load(res.text,{decodeEntities: false});
-                    let lists = $('.entries .entry');
-                    let tasks = [];
-                    lists.each(function() {
-                        let link = $(this).find('.entry-meta .entry-meta-more a').attr('href');
-                        if (link) {
-                            link = link.split('url=')[1];
-                            tasks.push(that.checkDatas(link, $(this), that.model));
-                        }
-
-                    });
-                    Promise.all(tasks)
-                        .then((posts) => {
-                            log('reso');
-                            resolve(posts);
-                        });
-                });
+                superagent.get(post.link).end((err, res) => {
+                    !res.text && reject(`postFetch res.text error :${link}`)
+                    let $ = cheerio.load(res.text, { decodeEntities: false });
+                    post.author = $('.author-name').text();
+                    post.publishAt = $('.author-meta').text();
+                    post.content = $('.entry-content').html();
+                    // post.tags = $('.taglist--inline').text();
+                    if (post.content) {
+                        that.model.create(post, (err) => {
+                            err && log(`db save error..`);
+                            log(`db save success:'${post.link}'`)
+                            resolve(post);
+                        })
+                    } else {
+                        log(`this link lose content: '${post.link}'`)
+                        resolve(post);
+                    }
+                })
             });
         },
     };

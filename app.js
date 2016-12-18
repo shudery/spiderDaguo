@@ -16,10 +16,11 @@ const postModel = mongoose.model('posts', new mongoose.Schema(postSchema));
 let tasks = [],
     ponit;
 
-fs.readdirSync(__dirname + '/sites').forEach((path, i) => {
-    let site = require('./sites/' + path)(postModel);
-    tasks.push(startSpider(site));
-});
+fs.readdirSync(__dirname + '/sites')
+    .forEach((path, i) => {
+        let site = require('./sites/' + path)(postModel);
+        tasks.push(startSpider(site));
+    });
 
 startTasks();
 
