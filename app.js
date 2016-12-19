@@ -3,14 +3,16 @@ const superagent = require('superagent'),
     cheerio = require('cheerio'),
     colors = require('colors'),
     _ = require('./lib/daguo'),
+    async = require('async'),
     fs = require('fs');
 
 const postSchema = require('./models/postSchema'),
     dbServer = 'mongodb://127.0.0.1:27017/node',
     log = _.log;
 
+mongoose.Promise = Promise;
 //connect db
-mongoose.connect(dbServer)
+const db = mongoose.connect(dbServer);
 const postModel = mongoose.model('posts', new mongoose.Schema(postSchema));
 
 let tasks = [],
@@ -21,6 +23,8 @@ fs.readdirSync(__dirname + '/sites')
         let site = require('./sites/' + path)(postModel);
         tasks.push(startSpider(site));
     });
+
+// tasks.push(startSpider(require('./special/zhihu999.js')(mongoose.model('zhihuBest999', new mongoose.Schema(postSchema)))));
 
 startTasks();
 
@@ -33,16 +37,22 @@ function startSpider(site, count) {
     return function() {
         site.listsFetch()
             .then((posts) => {
-                let taskLists = [];
-                posts.forEach((post) => {
-                    post && taskLists.push(site.postFetch(post));
+
+                async.mapLimit(posts, 5, (post, cb) => {
+                    if (post) {
+                        site.postFetch(post, cb);
+                    } else {
+                        cb(null)
+                    };
+                }, (err, result) => {
+                    err && console.log(err);
+                    log(`${site.baseSite} done!`.yellow);
+                    //爬下一个网站
+                    point++;
+                    if (tasks[point]) {
+                        tasks[point]();
+                    };
                 });
-                return Promise.all(taskLists);
-            }).then((posts) => {
-                log(`${site.baseSite} done!`.yellow);
-                //爬下一个网站
-                point++;
-                tasks[point] && tasks[point]();
             }).catch((err) => {
                 err && log(`promise error catch :${err}`);
             });

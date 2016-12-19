@@ -1,12 +1,10 @@
 const superagent = require('superagent');
-const mongoose = require('mongoose');
 const cheerio = require('cheerio');
 const colors = require('colors');
 const _ = require('../lib/daguo');
 const log = _.log;
 
 module.exports = function(model) {
-
     return {
         url: 'https://segmentfault.com/blogs/hottest/weekly',
         baseUrl: 'https://segmentfault.com',
@@ -18,7 +16,7 @@ module.exports = function(model) {
                 log(`start fetch ${that.baseSite}`.yellow);
                 superagent.get(that.url)
                     .end((err, res) => {
-                        !res.text && reject(`listsFetch res.text error: '${that.url}'`)
+                        !res.text && reject(`listsFetch res.text error: '${that.url}'`.red)
                         let $ = cheerio.load(res.text, { decodeEntities: false });
                         let lists = $('.stream-list__item');
                         let tasks = [];
@@ -28,7 +26,7 @@ module.exports = function(model) {
                         });
                         Promise.all(tasks)
                             .then((posts) => {
-                                log('reso');
+                                log(`all checked lists: ${that.url}`.yellow);
                                 resolve(posts);
                             });
                     })
@@ -39,9 +37,9 @@ module.exports = function(model) {
             let that = this;
             return new Promise((resolve, reject) => {
                 that.model.find({ link: link }, { link: '' }, (err, data) => {
-                    err && reject(`find data error: '${link}'`)
+                    err && reject(`find data error: '${link}'`.red)
                     if (data.length) {
-                        log(`already fetch and save on db: '${link}'`);
+                        log(`already fetch and save on db: '${link}'`.yellow);
                         resolve(null);
                     } else {
                         let post = {};
@@ -55,13 +53,13 @@ module.exports = function(model) {
                 })
             });
         },
-        
-        postFetch(post) {
+
+        postFetch(post,cb) {
             let that = this;
-            return new Promise((resolve, reject) => {
+            // return new Promise((resolve, reject) => {
                 superagent.get(post.link)
                     .end((err, res) => {
-                        !res.text && reject(`postFetch res.text error :'${link}'`)
+                        !res.text && log(`postFetch res.text error :'${link}'`.red)
                         let $ = cheerio.load(res.text, { decodeEntities: false });
                         post.author = $('.article__author a').text();
                         post.publishAt = $('.article__author').text();
@@ -71,17 +69,17 @@ module.exports = function(model) {
                         if (post.content) {
                             that.model.create(post, (err) => {
                                 err && log(`db save error..`);
-                                log(`db save success:'${post.link}'`)
-                                resolve(post);
+                                log(`db save success:'${post.link}'`.green)
+                                cb(null,post);
                             })
                         } else {
-                            log(`this link lose content: '${post.link}'`)
-                            resolve(post);
+                            log(`this link lose content: '${post.link}'`.red)
+                            cb(null,post);
                         }
                     })
-            });
+            // });
         },
-        
+
 
     }
 };

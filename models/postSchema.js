@@ -5,7 +5,7 @@ module.exports = {
 	author: String,
 	desc: String,
 	publishAt: String,
-	star: Number,
+	star: String,
 	source: String,
 	srcUrl: String,
 	tags: String,
