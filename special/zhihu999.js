@@ -61,13 +61,14 @@ module.exports = function(model) {
             // return new Promise((resolve, reject) => {
             superagent.get(post.link)
                 .end((err, res) => {
-                    !res.text && console.log(`postFetch res.text error :${post.link}`) && cb(null, post.id);
+                    (!res || !res.text) && console.log(`postFetch res.text error :${post.link}`) && cb(null, post.id);
                     let $ = cheerio.load(res.text, { decodeEntities: false });
                     post.createAt = Date.now();
                     post.author = $('.answer-head .author-link').text();
                     post.publishAt = $('.zm-item-answer .answer-date-link').text();
-                    post.content = $('.zm-editable-content.clearfix')
-                        .html();
+                    post.content = $('.zm-editable-content.clearfix').html();
+                    post.comments = $('.CommentItem_content_CYqW').html();
+                    console.log(post.comments);
                     // post.tags = $('.taglist--inline').text();
                     if (post.content) {
                         that.model.create(post, (err) => {

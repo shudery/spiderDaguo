@@ -5,6 +5,7 @@ module.exports = {
 	author: String,
 	desc: String,
 	publishAt: String,
+	comments: String,
 	star: String,
 	source: String,
 	srcUrl: String,

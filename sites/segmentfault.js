@@ -18,6 +18,7 @@ module.exports = function(model) {
                     .end((err, res) => {
                         !res.text && reject(`listsFetch res.text error: '${that.url}'`.red)
                         let $ = cheerio.load(res.text, { decodeEntities: false });
+                        
                         let lists = $('.stream-list__item');
                         let tasks = [];
                         lists.each(function() {
